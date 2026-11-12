@@ -21,6 +21,22 @@
 
 .lookup-result{margin-top:18px}.lookup-result>.panel{margin-top:12px}.tagcard{padding:20px}.tagcard .taghead{display:flex;justify-content:space-between;align-items:start;gap:14px}.tagcard .form{margin-top:15px}.tagcode{font-size:22px;letter-spacing:2px;font-weight:850}.tagurl{overflow-wrap:anywhere;font-size:12px;color:#666}.card-top{display:flex;justify-content:space-between;gap:12px}.buttonrow .btn{white-space:normal}.notice.error{border-color:#d9b2b2;background:#fff5f5;color:#a00}.notice.success{border-color:#afcdb2;background:#f5fff6}.qrpanel{margin-top:18px}.account-menu{z-index:1010}.admin-tabs button{cursor:pointer}h1{white-space:pre-line}.card-mini{background:#fafafa;border:1px solid #ddd;padding:16px;border-radius:12px;overflow-wrap:anywhere}small{line-height:1.5}.fieldwrap textarea{resize:vertical}input[type=checkbox]{accent-color:#111;cursor:pointer}.section.disabled{display:none}.statusline{color:#555;font-size:12px}.pill.active{background:#e4f2e7;color:#205b2e}footer{margin-top:40px}.copyline{font-family:ui-monospace,monospace;letter-spacing:.3px;overflow-wrap:anywhere}
 
+
+/* BAG.ID – kolekcie obľúbených miest */
+.collection-form{display:grid;gap:12px}
+.collection-form .field{width:100%}
+.collection-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.collection-head h3{margin:0}
+.collection-card{display:grid;gap:14px}
+.collection-actions{display:flex;flex-wrap:wrap;gap:8px}
+.collection-place{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.collection-place strong{display:block;font-size:13px}
+.collection-place small{color:var(--muted)}
+.collection-pick{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:8px}
+.collection-pick select{min-width:155px;max-width:250px;padding:7px}
+.share-hint{font-size:12px;color:var(--muted);line-height:1.55}
+#sharedCollectionPlaces .place{margin:10px 0}
+@media(max-width:650px){.collection-head{display:block}.collection-pick select{max-width:100%}}
 </style>
 </head>
 <body>
@@ -35,7 +51,11 @@
 <div class="split"><div class="panel"><h2>Mapa okolia</h2><div id="map" class="map"></div></div><div class="panel"><h2>Miesta <span class="pill" id="resultCount">0</span></h2><div class="place-list" id="places"><div class="empty">Vyber kategóriu a klikni na Vyhľadať miesta.</div></div></div></div></section>
 <section class="section" id="lost"><div class="section-top"><div class="eyebrow">LOST &amp; FOUND</div><h1>Nájdi vlastníka.</h1><p class="lead">Naskenuj BAG.ID NFC štítok alebo zadaj jeho 6-miestny kód.</p></div><div class="panel max600"><div class="form"><label class="fieldwrap">Kód štítku<input class="field" id="lookupCode" maxlength="6" autocomplete="off" placeholder="Napr. A2B7C9"></label><button class="btn" id="lookupBtn">Vyhľadať štítok</button></div><div id="lookupResult" class="lookup-result"><div class="notice">Kontaktné údaje sa zobrazia iba vtedy, ak ich majiteľ povolil.</div></div></div></section>
 <section class="section" id="tags"><div class="section-top"><div class="eyebrow">NFC IDENTITY</div><h1>Moje štítky.</h1><p class="lead">Každý BAG.ID štítok má vlastný NFC odkaz a samostatný aktivačný kľúč.</p></div><div class="panel max600"><h2>Aktivovať štítok</h2><p class="muted">Kód a aktivačný kľúč dostaneš k fyzickému štítku. Samotné naskenovanie čipu na prevzatie nestačí.</p><div class="form"><label class="fieldwrap">BAG.ID číslo<input class="field" id="tagCode" maxlength="6" placeholder="A2B7C9" autocomplete="off"></label><label class="fieldwrap">Aktivačný kľúč<input class="field" id="activationKey" maxlength="32" placeholder="32 znakov z kartičky" autocomplete="off"></label><label class="fieldwrap">Názov predmetu<input class="field" id="tagName" maxlength="70" placeholder="Napr. Moja taška"></label><button class="btn" id="claimBtn">Pridať k účtu</button></div></div><div class="section-top" style="margin-top:35px"><h2>Moje aktívne štítky</h2></div><div id="tagList" class="stack"><div class="empty">Po prihlásení sa tu zobrazia tvoje štítky.</div></div></section>
-<section class="section" id="favorites"><div class="section-top"><div class="eyebrow">SAVE YOUR PLACES</div><h1>Obľúbené miesta.</h1></div><div id="favoritesList" class="stack"><div class="empty">Najskôr sa prihlás.</div></div></section>
+<section class="section" id="favorites"><div class="section-top"><div class="eyebrow">SAVE YOUR PLACES</div><h1>Obľúbené miesta.</h1><p class="lead">Vytvor si kolekcie, ulož do nich svoje obľúbené miesta a pošli ich priateľom.</p></div>
+<div class="panel" style="margin-bottom:20px"><h2>Nová kolekcia</h2><div class="collection-form"><label class="fieldwrap">Názov kolekcie<input id="newCollectionTitle" class="field" maxlength="80" placeholder="Napr. Kaviarne v Bratislave"></label><label class="fieldwrap">Popis (voliteľné)<textarea id="newCollectionDesc" class="field" maxlength="280" rows="2" placeholder="Miesta, ktoré sa oplatí navštíviť…"></textarea></label><button class="btn" id="createCollectionBtn">+ Vytvoriť kolekciu</button><small class="share-hint">Nové kolekcie sú súkromné. Zdieľanie zapneš až keď budeš chcieť.</small></div></div>
+<div class="section-top"><h2>Moje kolekcie</h2></div><div id="collectionsList" class="stack"><div class="empty">Načítavam kolekcie…</div></div>
+<div class="section-top" style="margin-top:30px"><h2>Uložené miesta</h2><p class="muted">Miesta z tohto zoznamu môžeš pridať do ľubovoľnej kolekcie.</p></div><div id="favoritesList" class="stack"><div class="empty">Najskôr sa prihlás.</div></div></section>
+<section class="section" id="collection-view"><div class="section-top"><div class="eyebrow">BAG.ID · SHARED COLLECTION</div><h1 id="sharedCollectionTitle">Zdieľaná kolekcia</h1><p id="sharedCollectionDescription" class="lead"></p></div><div id="sharedCollectionPlaces" class="stack"><div class="notice">Načítavam kolekciu…</div></div><div style="margin-top:22px"><button class="btn secondary" data-page="explore">← Späť na Explore</button></div></section>
 <section class="section" id="visited"><div class="section-top"><div class="eyebrow">YOUR HISTORY</div><h1>Miesta, kde som bol.</h1></div><div id="visitedList" class="stack"><div class="empty">Najskôr sa prihlás.</div></div></section>
 <section class="section" id="profile"><div class="section-top"><div class="eyebrow">YOUR ACCOUNT</div><h1>Môj profil.</h1><p class="lead" id="sessionStatus">Vytvor si účet alebo sa prihlás.</p></div>
 <div id="authForm" class="panel max600"><h2>Prihlásenie / registrácia</h2><div class="form"><label class="fieldwrap">E-mail<input class="field" id="authEmail" type="email" autocomplete="email" placeholder="tvoj@email.sk"></label><label class="fieldwrap">Heslo<input class="field" id="authPassword" type="password" autocomplete="current-password" minlength="10" placeholder="Aspoň 10 znakov"></label><div class="buttonrow"><button class="btn" id="signInBtn">Prihlásiť sa</button><button class="btn secondary" id="signUpBtn">Vytvoriť účet</button><button class="btn secondary small" id="resetBtn">Zabudnuté heslo</button></div><p class="muted">Pri registrácii môže prísť potvrdzovací e-mail. Heslá sa neukladajú do GitHubu ani do nášho kódu.</p></div></div>
@@ -72,6 +92,7 @@ const emailValid = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 let db=null, user=null, isAdmin=false, tags=[], saved={favorites:[],visited:[]};
 let position={lat:48.1486,lon:17.1077}, selectedCat='all', map=null, pins=null, results=[];
 let page='explore', recoveryMode=false, lastPublicToken=null;
+let collections=[];
 const defaults={title:'Explore more.\nLose less.',subtitle:'Objavuj miesta okolo seba a ochráň svoje veci s BAG.ID.',accent:'#151515',sections:{lost:true,tags:true,favorites:true,visited:true}};
 let settings=structuredClone(defaults);
 
@@ -91,6 +112,14 @@ function showPage(id,{hash=true}={}){
 }
 function parseRoute(){
   const value=decodeURIComponent(location.hash.slice(1));
+  if(value.startsWith('collection/')){
+    const token=value.slice('collection/'.length);
+    if(/^[a-f0-9]{64}$/.test(token)){
+      showPage('collection-view',{hash:false});
+      if(db)loadSharedCollection(token);
+      return;
+    }
+  }
   if(value.startsWith('lost/')){
     const tok=value.slice(5);
     if(/^[a-f0-9]{32}$/.test(tok)){ showPage('lost',{hash:false}); if(db && tok!==lastPublicToken){lastPublicToken=tok;doLookup({token:tok});} return; }
@@ -133,9 +162,9 @@ async function syncUser(){
     isAdmin=!!ad.data;
     $('profileName').value=prof.data?.display_name||'';
     if(prof.data?.avatar_path){const {data}=await db.storage.from('bagid-avatars').createSignedUrl(prof.data.avatar_path,3600);if(data?.signedUrl){$('accountToggle').replaceChildren();const img=make('img');img.src=data.signedUrl;img.alt='Profilová fotografia';$('accountToggle').append(img);}}
-    await Promise.all([loadTags(),loadSaved('favorites'),loadSaved('visited')]);
-  }else{isAdmin=false;tags=[];saved={favorites:[],visited:[]};}
-  updateAuthUI();renderTags();renderSaved('favorites');renderSaved('visited');
+    await Promise.all([loadTags(),loadSaved('favorites'),loadSaved('visited'),loadCollections()]);
+  }else{isAdmin=false;tags=[];saved={favorites:[],visited:[]};collections=[];}
+  updateAuthUI();renderTags();renderSaved('favorites');renderSaved('visited');renderCollections();
   if(page==='admin'&&!isAdmin)showPage('profile');
 }
 async function requireDb(){if(!db){toast('Najskôr treba nastaviť Supabase databázu v index.html.');return false;}return true;}
@@ -234,8 +263,27 @@ async function doLookup({token=null}={}){
 }
 
 async function loadSaved(kind){if(!user)return;const {data,error}=await db.from('saved_places').select('place_id,name,kind,lat,lon').eq('user_id',user.id).eq('list_type',kind).order('created_at',{ascending:false});if(error)fail(error);else saved[kind]=data||[];}
-function renderSaved(kind){const root=$(kind+'List');root.replaceChildren();if(!user){root.append(make('div','empty','Prihlás sa, aby si si mohol ukladať miesta do databázy.'));return;}if(!saved[kind].length){root.append(make('div','empty','Zatiaľ tu nemáš žiadne miesta.'));return;}
-  saved[kind].forEach(p=>{const item=make('div','place'),txt=make('div');txt.append(make('strong','',p.name),make('small','',p.kind||'Miesto'));const b=make('button','btn secondary small','Odstrániť');b.addEventListener('click',()=>toggleSaved(kind,{id:p.place_id,name:p.name,kind:p.kind,lat:p.lat,lon:p.lon}));item.append(txt,b);root.append(item);});
+function renderSaved(kind){
+  const root=$(kind+'List');root.replaceChildren();
+  if(!user){root.append(make('div','empty','Prihlás sa, aby si si mohol ukladať miesta do databázy.'));return;}
+  if(!saved[kind].length){root.append(make('div','empty','Zatiaľ tu nemáš žiadne miesta.'));return;}
+  saved[kind].forEach(p=>{
+    const item=make('div','place'),txt=make('div');
+    txt.append(make('strong','',p.name),make('small','',p.kind||'Miesto'));
+    if(kind==='favorites'){
+      if(collections.length){
+        const pick=make('div','collection-pick'),select=make('select','field');
+        const base=make('option','','Vyber kolekciu');base.value='';select.append(base);
+        collections.forEach(c=>{const opt=make('option','',c.title);opt.value=c.id;select.append(opt);});
+        const add=make('button','btn secondary small','Pridať do kolekcie');
+        add.addEventListener('click',()=>{if(select.value)addPlaceToCollection(select.value,p);else toast('Najskôr vyber kolekciu.');});
+        pick.append(select,add);txt.append(pick);
+      }else txt.append(make('small','muted','Vytvor kolekciu vyššie, aby si do nej mohol pridať toto miesto.'));
+    }
+    const remove=make('button','btn secondary small','Odstrániť');
+    remove.addEventListener('click',()=>toggleSaved(kind,{id:p.place_id,name:p.name,kind:p.kind,lat:p.lat,lon:p.lon}));
+    item.append(txt,remove);root.append(item);
+  });
 }
 async function toggleSaved(kind,p){if(!await requireUser())return;const previous=saved[kind].find(x=>x.place_id===p.id);try{
     const op=previous
@@ -244,6 +292,150 @@ async function toggleSaved(kind,p){if(!await requireUser())return;const previous
     const {error}=await op;if(error)throw error;await loadSaved(kind);renderSaved(kind);if(page==='explore')renderResults(results);toast(previous?'Miesto odstránené.':'Miesto uložené do účtu.');
   }catch(e){fail(e);}
 }
+
+/* Kolekcie – súkromné tabuľky cez RLS; verejný náhľad iba cez tokenizované RPC. */
+const collectionShareUrl=token=>baseUrl()+'#collection/'+token;
+async function loadCollections(){
+  if(!db||!user){collections=[];renderCollections();return;}
+  const {data:rows,error}=await db.from('collections').select('id,title,description,share_enabled,share_token,created_at').eq('owner_id',user.id).order('created_at',{ascending:false});
+  if(error){fail(error);collections=[];renderCollections();return;}
+  const list=rows||[];
+  let places=[];
+  if(list.length){
+    const result=await db.from('collection_places').select('collection_id,place_id,name,kind,lat,lon').in('collection_id',list.map(c=>c.id)).order('name');
+    if(result.error)fail(result.error);else places=result.data||[];
+  }
+  collections=list.map(c=>({...c,places:places.filter(p=>p.collection_id===c.id)}));
+  renderCollections();renderSaved('favorites');
+}
+function renderCollections(){
+  const root=$('collectionsList');if(!root)return;root.replaceChildren();
+  if(!user){root.append(make('div','empty','Prihlás sa, aby si mohol vytvárať kolekcie.'));return;}
+  if(!collections.length){root.append(make('div','empty','Zatiaľ nemáš žiadnu kolekciu. Vytvor svoju prvú!'));return;}
+  for(const c of collections){
+    const card=make('div','panel collection-card');
+    const head=make('div','collection-head'),left=make('div');
+    left.append(make('h3','',c.title),make('small','statusline',c.share_enabled?'Zdieľané odkazom':'Súkromná kolekcia'));
+    if(c.description)left.append(make('p','muted',c.description));
+    const count=make('span','statusline',c.places.length+' miest');
+    head.append(left,count);card.append(head);
+    const items=make('div','');
+    if(!c.places.length)items.append(make('div','empty','Zatiaľ prázdna. Pridaj miesto zo zoznamu nižšie.'));
+    for(const p of c.places){
+      const line=make('div','collection-place'),txt=make('div');
+      txt.append(make('strong','',p.name),make('small','',p.kind||'Miesto'));
+      const remove=make('button','btn secondary small','Odobrať');
+      remove.addEventListener('click',()=>removePlaceFromCollection(c.id,p.place_id));
+      line.append(txt,remove);items.append(line);
+    }
+    card.append(items);
+    const actions=make('div','collection-actions');
+    const share=make('button','btn secondary small',c.share_enabled?'Vypnúť zdieľanie':'Zapnúť zdieľanie');
+    share.addEventListener('click',()=>toggleCollectionSharing(c));
+    actions.append(share);
+    if(c.share_enabled){
+      const copy=make('button','btn small','Kopírovať odkaz');
+      copy.addEventListener('click',()=>copyCollectionLink(c));
+      const view=make('button','btn secondary small','Zobraziť');
+      view.addEventListener('click',()=>{location.hash='collection/'+c.share_token;});
+      const reset=make('button','btn secondary small','Zmeniť zdieľaný odkaz');
+      reset.addEventListener('click',()=>resetCollectionLink(c));
+      actions.append(copy,view,reset);
+    }
+    const del=make('button','btn secondary small','Vymazať kolekciu');
+    del.addEventListener('click',()=>deleteCollection(c));
+    actions.append(del);card.append(actions);
+    root.append(card);
+  }
+}
+async function createCollection(){
+  if(!await requireUser())return;
+  const title=$('newCollectionTitle').value.trim();
+  const description=$('newCollectionDesc').value.trim();
+  if(!title||title.length>80||description.length>280){toast('Zadaj názov (do 80 znakov) a kratší popis.');return;}
+  setBusy('createCollectionBtn',true);
+  try{
+    const {error}=await db.from('collections').insert({owner_id:user.id,title,description});
+    if(error)throw error;
+    $('newCollectionTitle').value='';$('newCollectionDesc').value='';
+    await loadCollections();toast('Súkromná kolekcia vytvorená.');
+  }catch(e){fail(e);}finally{setBusy('createCollectionBtn',false);}
+}
+async function addPlaceToCollection(id,p){
+  if(!await requireUser())return;
+  if(!collections.some(c=>c.id===id)){toast('Vyber platnú kolekciu.');return;}
+  try{
+    const {error}=await db.from('collection_places').upsert({collection_id:id,place_id:p.place_id,name:p.name,kind:p.kind,lat:p.lat,lon:p.lon},{onConflict:'collection_id,place_id'});
+    if(error)throw error;await loadCollections();toast('Miesto pridané do kolekcie.');
+  }catch(e){fail(e);}
+}
+async function removePlaceFromCollection(id,placeId){
+  if(!await requireUser())return;
+  try{
+    const {error}=await db.from('collection_places').delete().eq('collection_id',id).eq('place_id',placeId);
+    if(error)throw error;await loadCollections();toast('Miesto odobraté z kolekcie.');
+  }catch(e){fail(e);}
+}
+async function toggleCollectionSharing(c){
+  if(!await requireUser())return;
+  try{
+    const {error}=await db.from('collections').update({share_enabled:!c.share_enabled}).eq('id',c.id).eq('owner_id',user.id);
+    if(error)throw error;await loadCollections();
+    toast(c.share_enabled?'Zdieľanie vypnuté.':'Kolekcia sa dá zdieľať cez odkaz.');
+  }catch(e){fail(e);}
+}
+async function copyCollectionLink(c){
+  const link=collectionShareUrl(c.share_token);
+  try{await navigator.clipboard.writeText(link);toast('Odkaz na kolekciu skopírovaný.');}
+  catch{window.prompt('Skopíruj odkaz na kolekciu:',link);}
+}
+async function resetCollectionLink(c){
+  if(!await requireUser())return;
+  if(!confirm('Starý odkaz prestane fungovať. Vygenerovať nový?'))return;
+  try{
+    const token=randomHex(32);
+    const {error}=await db.from('collections').update({share_token:token}).eq('id',c.id).eq('owner_id',user.id);
+    if(error)throw error;await loadCollections();toast('Nový odkaz vytvorený. Starý už nefunguje.');
+  }catch(e){fail(e);}
+}
+async function deleteCollection(c){
+  if(!await requireUser())return;
+  if(!confirm('Natrvalo vymazať kolekciu "'+c.title+'"? Uložené obľúbené miesta zostanú.'))return;
+  try{
+    const {error}=await db.from('collections').delete().eq('id',c.id).eq('owner_id',user.id);
+    if(error)throw error;await loadCollections();toast('Kolekcia vymazaná.');
+  }catch(e){fail(e);}
+}
+async function loadSharedCollection(token){
+  const list=$('sharedCollectionPlaces');list.replaceChildren(make('div','notice','Načítavam kolekciu…'));
+  $('sharedCollectionTitle').textContent='Zdieľaná kolekcia';
+  $('sharedCollectionDescription').textContent='';
+  if(!db){list.replaceChildren(make('div','notice','Databáza sa ešte nenačítala.'));return;}
+  try{
+    const {data,error}=await db.rpc('get_shared_collection',{p_token:token});
+    if(error)throw error;
+    if(location.hash!=='#collection/'+token)return;
+    if(!data?.length){list.replaceChildren(make('div','notice','Táto kolekcia je súkromná, nedostupná alebo odkaz už neplatí.'));return;}
+    $('sharedCollectionTitle').textContent=data[0].title;
+    $('sharedCollectionDescription').textContent=data[0].description||'Kolekcia miest zdieľaná cez BAG.ID.';
+    list.replaceChildren();
+    const places=data.filter(p=>p.place_id);
+    if(!places.length){list.append(make('div','empty','Táto kolekcia zatiaľ neobsahuje žiadne miesta.'));return;}
+    for(const p of places){
+      const item=make('div','place'),txt=make('div');
+      txt.append(make('strong','',p.place_name),make('small','',p.place_kind||'Miesto'));
+      item.append(txt);
+      if(Number.isFinite(p.lat)&&Number.isFinite(p.lon)){
+        const link=make('a','btn secondary small','Otvoriť v mape');
+        link.href='https://www.openstreetmap.org/?mlat='+encodeURIComponent(p.lat)+'&mlon='+encodeURIComponent(p.lon)+'#map=16/'+p.lat+'/'+p.lon;
+        link.target='_blank';link.rel='noopener noreferrer';
+        item.append(link);
+      }
+      list.append(item);
+    }
+  }catch(e){fail(e);list.replaceChildren(make('div','notice','Kolekciu sa nepodarilo načítať. Skontroluj nastavenie Supabase.'));}
+}
+
 function distance(lat,lon){const R=6371,toRad=x=>x*Math.PI/180;const dlat=toRad(lat-position.lat),dlon=toRad(lon-position.lon);const a=Math.sin(dlat/2)**2+Math.cos(toRad(position.lat))*Math.cos(toRad(lat))*Math.sin(dlon/2)**2;return (R*2*Math.asin(Math.sqrt(a))).toFixed(1)+' km';}
 function renderResults(items){const root=$('places');root.replaceChildren();$('resultCount').textContent=items.length;if(!items.length){root.append(make('div','empty','Nenašli sa žiadne miesta. Skús väčší okruh.'));return;}
   for(const p of items){const item=make('div','place'),txt=make('div');txt.append(make('strong','',p.name),make('small','',p.kind+' · '+distance(p.lat,p.lon)));const actions=make('div','place-actions');for(const [kind,label] of [['favorites','♡ Favorites'],['visited','✓ Been']]){const on=saved[kind].some(x=>x.place_id===p.id);const btn=make('button','',on?'✓ '+label:label);btn.addEventListener('click',()=>toggleSaved(kind,p));actions.append(btn);}item.append(txt,actions);root.append(item);}
@@ -303,6 +495,7 @@ function bindEvents(){
   $('saveContent').addEventListener('click',()=>saveSite({title:$('editTitle').value.slice(0,150),subtitle:$('editSubtitle').value.slice(0,300)}));
   $('saveAccent').addEventListener('click',()=>saveSite({accent:$('editAccent').value}));
   $('saveSections').addEventListener('click',()=>saveSite({sections:Object.fromEntries(Array.from(document.querySelectorAll('[data-section]')).map(n=>[n.dataset.section,n.checked]))}));
+  $('createCollectionBtn').addEventListener('click',createCollection);
   $('issueTagBtn').addEventListener('click',issueTag);$('addAdminBtn').addEventListener('click',addAdmin);
   window.addEventListener('hashchange',parseRoute);
 }
@@ -318,7 +511,7 @@ async function init(){bindEvents();applySettings();updateAuthUI();initMap();pars
     db=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
     db.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){recoveryMode=true;$('newPasswordForm').classList.remove('hidden');showPage('profile');}setTimeout(()=>syncUser().catch(fail),0);});
     await refreshSettings();await syncUser();
-    if(location.hash.startsWith('#lost/'))parseRoute();
+    if(location.hash.startsWith('#lost/')||location.hash.startsWith('#collection/'))parseRoute();
   }catch(e){fail(e);$('setupNotice').textContent='Nepodarilo sa pripojiť k Supabase. Skontroluj SUPABASE_PUBLISHABLE_KEY v index.html, sieť a nastavenie databázy.';$('setupNotice').classList.remove('hidden');}
 }
 init().catch(fail);
