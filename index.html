@@ -1,18 +1,34 @@
 <!doctype html>
+<!--
+ BAG.ID – jediný HTML súbor pre GitHub Pages.
+ 1) V Poznámkovom bloku stlač Ctrl+F a hľadaj riadok s verejným Supabase kľúčom.
+ 2) Nahraď tento text skutočným Supabase publishable key (začína sb_publishable_).
+ 3) Ulož a nahraj index.html na GitHub.
+ Project URL je už predvyplnené z tvojho screenshotu.
+ Nikdy tu nevkladaj service_role alebo secret key.
+-->
 <html lang="sk">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#111111"><meta name="description" content="BAG.ID – NFC štítky, Lost & Found a miesta v tvojom okolí.">
 <title>BAG.ID — Explore more. Lose less.</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="styles.css">
+<style>
+:root{--fg:#151515;--ink:#111;--muted:#767676;--line:#e7e7e7;--soft:#f7f7f7;--card:#fff;--rad:16px;--max:1160px}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:#fff}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:default}a{color:inherit}header{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:1000}.wrap{max-width:var(--max);margin:auto;padding:0 24px}.bar{min-height:77px;display:flex;align-items:center;gap:28px}.logo{font-size:23px;font-weight:850;letter-spacing:-1.5px;text-decoration:none;white-space:nowrap}.logo span{color:#888}nav{display:flex;align-items:center;gap:5px;flex:1}nav button,.mobilebar button{border:0;background:transparent;padding:12px 13px;border-radius:10px;color:#666;font-size:13px;font-weight:650;white-space:nowrap}nav button.active,nav button:hover{background:#f1f1f1;color:#111}.account{position:relative;margin-left:auto}.avatar{border:1px solid #d6d6d6;background:#f4f4f4;width:43px;height:43px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:18px;overflow:hidden;padding:0}.avatar img,.photo img{width:100%;height:100%;object-fit:cover}#avatarTop{display:grid;place-items:center;width:100%;height:100%}.account-menu{position:absolute;right:0;top:50px;width:205px;padding:8px;border:1px solid var(--line);border-radius:13px;box-shadow:0 14px 45px #0000001b;background:#fff}.account-menu button{display:block;width:100%;text-align:left;padding:11px 12px;background:#fff;border:0;border-radius:8px}.account-menu button:hover{background:#f4f4f4}.hidden{display:none!important}main{min-height:calc(100vh - 150px);padding-top:43px;padding-bottom:85px}.section{display:none}.section.active{display:block}.eyebrow{font-size:11px;text-transform:uppercase;font-weight:850;letter-spacing:1.65px;color:#777;margin-bottom:13px}h1{font-size:clamp(38px,6vw,72px);letter-spacing:-3.5px;line-height:1.04;margin:0 0 20px;font-weight:850}h2{font-size:25px;letter-spacing:-.9px;margin:0 0 13px}h3{font-size:16px;margin:0 0 6px}.muted{color:var(--muted);line-height:1.6}.lead{font-size:18px;line-height:1.6;max-width:570px;color:#777;margin:0}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;margin:8px 0 40px}.btn{border:1px solid var(--fg);background:var(--fg);color:#fff;border-radius:11px;padding:13px 18px;min-height:44px;font-weight:750;white-space:nowrap}.btn:hover{filter:brightness(1.24)}.secondary{background:#fff;color:#111;border:1px solid #d6d6d6}.secondary:hover{background:#f6f6f6;filter:none}.small{font-size:12px;padding:8px 11px;min-height:36px}.stack{display:flex;flex-direction:column;gap:16px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px;margin-bottom:30px}.tile{background:#fff;border:1px solid var(--line);border-radius:var(--rad);padding:21px 17px;text-align:left;min-height:124px}.tile:hover,.tile.active{border-color:#111;background:#fafafa}.symbol{font-size:25px;display:block;margin-bottom:13px}.tile b{font-size:14px}.tile small{display:block;color:#999;margin-top:5px}.controls{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:20px}.fieldwrap{display:grid;gap:7px;font-size:12px;font-weight:750;color:#666}.field{border:1px solid #dcdcdc;border-radius:10px;padding:12px 13px;background:#fff;min-height:44px;outline:none;color:#111;width:100%}.field:focus{border-color:#333;box-shadow:0 0 0 3px #0000000c}.controls .field{min-width:138px}.split{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(310px,.8fr);gap:21px}.panel{border:1px solid var(--line);border-radius:var(--rad);padding:22px;background:var(--card)}.map{height:445px;background:#f0f0f0;border-radius:12px;overflow:hidden;position:relative}.map-fallback{display:grid;place-items:center;text-align:center;padding:26px;line-height:1.5;color:#777;height:100%}.place-list{display:flex;flex-direction:column;gap:9px;max-height:500px;overflow:auto}.place{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px}.place small{display:block;color:#888;margin-top:5px}.place-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:end}.place-actions button{font-size:12px;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px}.place-actions button:hover{background:#f2f2f2}.notice{border:1px solid var(--line);border-radius:11px;padding:13px 15px;color:#666;background:#fafafa;font-size:13px;line-height:1.6}.notice strong{color:#111}.demo{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.6px;padding:2px 6px;border:1px solid #ddd;border-radius:5px;margin-left:4px;color:#777}.max600{max-width:650px}.form{display:grid;gap:16px}.form label{display:grid;gap:7px;color:#444;font-size:13px;font-weight:650}.form input[type=checkbox]{width:18px;height:18px;accent-color:#111}.check{display:flex!important;align-items:center;gap:9px!important}.buttonrow{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.tag-item{display:flex;align-items:center;justify-content:space-between;gap:13px;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:9px}.tag-item code{font-size:14px;font-weight:850;letter-spacing:1.4px}.tag-item small{display:block;color:#999;margin-top:6px}.status{font-size:11px;color:#777}.photo{width:76px;height:76px;display:grid;place-items:center;overflow:hidden;border-radius:50%;border:1px solid #ddd;background:#f4f4f4;font-size:30px}.admin-layout{display:grid;grid-template-columns:210px 1fr;gap:18px}.admin-tabs{display:flex;flex-direction:column;gap:5px}.admin-tabs button{padding:12px;background:#fff;border:0;text-align:left;border-radius:9px}.admin-tabs button.active,.admin-tabs button:hover{background:#eee}.adminpane{display:none}.adminpane.active{display:block}.divider{height:1px;background:var(--line);margin:20px 0}footer{border-top:1px solid var(--line);padding:23px 0;font-size:12px;color:#999}.mobilebar{display:none}.pill{display:inline-block;background:#f2f2f2;border-radius:20px;padding:6px 10px;font-size:11px;font-weight:750}.section-top{margin-bottom:26px}.section-top h1{font-size:clamp(34px,5vw,53px)}.empty{padding:22px;color:#999;text-align:center;border:1px dashed #ddd;border-radius:12px}#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;z-index:5000;border-radius:12px;background:#111;color:#fff;padding:14px 18px;box-shadow:0 10px 28px #0003;max-width:90vw;font-size:13px}#toast:empty{display:none}
+@media(max-width:900px){nav button{font-size:12px;padding:10px 7px}.grid{grid-template-columns:repeat(3,1fr)}.bar{gap:14px}}
+@media(max-width:700px){nav{display:none}.wrap{padding:0 17px}.bar{min-height:67px}.hero{display:block}.hero .btn{margin-top:22px}.grid{grid-template-columns:repeat(2,1fr);gap:10px}.tile{min-height:115px;padding:15px}.split,.admin-layout{grid-template-columns:1fr}.map{height:310px}.mobilebar{display:flex;position:fixed;bottom:0;left:0;right:0;border-top:1px solid #ddd;background:#fff;justify-content:space-between;gap:0;z-index:1000;padding:7px 2px calc(7px + env(safe-area-inset-bottom))}.mobilebar button{flex:1;min-width:0;white-space:normal;font-size:10px;padding:8px 2px}.mobilebar button.active{font-weight:900;color:#111}.mobilebar button b{display:block;font-size:17px}.place{align-items:flex-start;flex-direction:column}.place-actions{justify-content:start}main{padding-top:28px;padding-bottom:115px}.admin-tabs{flex-direction:row;overflow:auto}.section-top h1{letter-spacing:-2px}h1{letter-spacing:-2.5px}}
+
+.lookup-result{margin-top:18px}.lookup-result>.panel{margin-top:12px}.tagcard{padding:20px}.tagcard .taghead{display:flex;justify-content:space-between;align-items:start;gap:14px}.tagcard .form{margin-top:15px}.tagcode{font-size:22px;letter-spacing:2px;font-weight:850}.tagurl{overflow-wrap:anywhere;font-size:12px;color:#666}.card-top{display:flex;justify-content:space-between;gap:12px}.buttonrow .btn{white-space:normal}.notice.error{border-color:#d9b2b2;background:#fff5f5;color:#a00}.notice.success{border-color:#afcdb2;background:#f5fff6}.qrpanel{margin-top:18px}.account-menu{z-index:1010}.admin-tabs button{cursor:pointer}h1{white-space:pre-line}.card-mini{background:#fafafa;border:1px solid #ddd;padding:16px;border-radius:12px;overflow-wrap:anywhere}small{line-height:1.5}.fieldwrap textarea{resize:vertical}input[type=checkbox]{accent-color:#111;cursor:pointer}.section.disabled{display:none}.statusline{color:#555;font-size:12px}.pill.active{background:#e4f2e7;color:#205b2e}footer{margin-top:40px}.copyline{font-family:ui-monospace,monospace;letter-spacing:.3px;overflow-wrap:anywhere}
+
+</style>
 </head>
 <body>
 <header><div class="wrap bar"><a class="logo" href="#explore" id="brand">BAG<span>.</span>ID</a>
 <nav id="desktopNav"><button data-page="explore" class="active">Explore</button><button data-page="lost">Lost &amp; Found</button><button data-page="tags">My Tags</button><button data-page="favorites">Favorite Spots</button><button data-page="visited">Already Been</button></nav>
 <div class="account"><button class="avatar" id="accountToggle" aria-label="Otvoriť profil">◎</button><div class="account-menu hidden" id="accountMenu"><button data-page="profile">Môj profil</button><button data-page="admin" id="adminMenu" class="hidden">Admin Panel</button><button id="logoutMenu">Odhlásiť sa</button></div></div></div></header>
 <main class="wrap">
-<div id="setupNotice" class="notice hidden" style="margin-bottom:22px">Databáza zatiaľ nie je pripojená. Nastav <code>config.js</code> podľa README. Explore funguje aj bez prihlásenia.</div>
+<div id="setupNotice" class="notice hidden" style="margin-bottom:22px">Databáza zatiaľ nie je pripojená. Vlož Supabase publishable key do <code>index.html</code> podľa návodu. Explore funguje aj bez prihlásenia.</div>
 <section class="section active" id="explore"><div class="hero"><div><div class="eyebrow">DISCOVER YOUR SURROUNDINGS</div><h1 id="heroTitle">Explore more.<br>Lose less.</h1><p class="lead" id="heroSubtitle">Objavuj miesta vo svojom okolí a maj svoje veci pod kontrolou.</p></div><button class="btn" id="locateBtn">⌖ Použiť moju polohu</button></div>
 <div class="grid" id="categories"><button class="tile active" data-cat="all"><span class="symbol">◈</span><b>All places</b><small>Všetky kategórie</small></button><button class="tile" data-cat="cafe"><span class="symbol">☕</span><b>Cafés</b><small>Kaviarne</small></button><button class="tile" data-cat="restaurant"><span class="symbol">♨</span><b>Restaurants</b><small>Reštaurácie</small></button><button class="tile" data-cat="shop"><span class="symbol">◫</span><b>Shops</b><small>Obchody</small></button><button class="tile" data-cat="park"><span class="symbol">♧</span><b>Parks &amp; sights</b><small>Parky a pamiatky</small></button></div>
 <div class="controls"><label class="fieldwrap">Okruh<select id="radius" class="field"><option value="1000">1 km</option><option value="5000" selected>5 km</option><option value="10000">10 km</option><option value="20000">20 km</option></select></label><label class="fieldwrap">Doprava<select id="transport" class="field"><option value="foot">Pešo</option><option value="bike">Bicyklom</option><option value="car">Autom</option></select></label><button class="btn" id="searchBtn">Vyhľadať miesta</button><span class="muted" id="locationInfo">Východisková poloha: Bratislava (príklad)</span></div>
@@ -36,5 +52,276 @@
 <div class="mobilebar"><button data-page="explore" class="active"><b>⌖</b>Explore</button><button data-page="lost"><b>⌕</b>Lost &amp; Found</button><button data-page="tags"><b>◇</b>My Tags</button><button data-page="favorites"><b>♡</b>Favorites</button><button data-page="visited"><b>✓</b>Been</button></div>
 <footer><div class="wrap">BAG.ID · Made to be found</div></footer><div id="toast" role="status" aria-live="polite"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
-<script type="module" src="app.js"></script>
+<script type="module">
+// BAG.ID – v tomto jedinom súbore zmeň iba publishable key pod týmto riadkom.
+const SUPABASE_URL = 'https://bnsciehuplsxogvpvhbb.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_It9ZI4r7lShR3iPd2PpGMQ_9QS0eM6H';
+
+// BAG.ID: Public website + real Supabase Auth / Postgres. No service-role key here.
+const $ = id => document.getElementById(id);
+const make = (tag, cls, content) => { const node=document.createElement(tag); if(cls)node.className=cls; if(content!==undefined)node.textContent=String(content); return node; };
+const toast = msg => { const n=$('toast'); n.textContent=msg; clearTimeout(toast.timer); toast.timer=setTimeout(()=>{n.textContent='';},4600); };
+const fail = e => { console.error('BAG.ID',e);toast(e?.message || 'Niečo sa nepodarilo. Skús to znova.'); };
+const setBusy=(id,busy)=>{const b=$(id);if(b)b.disabled=busy;};
+const normCode = s => String(s||'').trim().toUpperCase().replace(/[^A-Z2-9]/g,'');
+const hex = bytes => Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('');
+const randomHex = n => hex(crypto.getRandomValues(new Uint8Array(n)));
+const publicUrl = token => `${location.origin}${location.pathname}#lost/${token}`;
+const baseUrl = () => `${location.origin}${location.pathname}`;
+const emailValid = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+let db=null, user=null, isAdmin=false, tags=[], saved={favorites:[],visited:[]};
+let position={lat:48.1486,lon:17.1077}, selectedCat='all', map=null, pins=null, results=[];
+let page='explore', recoveryMode=false, lastPublicToken=null;
+const defaults={title:'Explore more.\nLose less.',subtitle:'Objavuj miesta okolo seba a ochráň svoje veci s BAG.ID.',accent:'#151515',sections:{lost:true,tags:true,favorites:true,visited:true}};
+let settings=structuredClone(defaults);
+
+function headerMenuClose(){ $('accountMenu').classList.add('hidden'); }
+function showPage(id,{hash=true}={}){
+  if(!$(id)||!$(id).classList.contains('section'))id='explore';
+  if(id==='admin'&&!isAdmin){toast('Admin Panel je prístupný iba administrátorom.');id='profile';}
+  page=id;
+  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+  headerMenuClose();
+  if(hash){const h='#'+id;if(location.hash!==h)history.replaceState(null,'',h);}
+  if(id==='explore'&&map)setTimeout(()=>map.invalidateSize(),150);
+  if(id==='favorites'||id==='visited')renderSaved(id);
+  if(id==='tags')renderTags();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function parseRoute(){
+  const value=decodeURIComponent(location.hash.slice(1));
+  if(value.startsWith('lost/')){
+    const tok=value.slice(5);
+    if(/^[a-f0-9]{32}$/.test(tok)){ showPage('lost',{hash:false}); if(db && tok!==lastPublicToken){lastPublicToken=tok;doLookup({token:tok});} return; }
+  }
+  if($(value)?.classList.contains('section'))showPage(value,{hash:false});
+}
+function applySettings(){
+  const h=$('heroTitle');h.replaceChildren();String(settings.title||defaults.title).split('\n').forEach((line,i)=>{if(i)h.append(document.createElement('br'));h.append(document.createTextNode(line));});
+  $('heroSubtitle').textContent=settings.subtitle||defaults.subtitle;
+  document.documentElement.style.setProperty('--fg',settings.accent||'#151515');
+  for(const k of ['lost','tags','favorites','visited']){
+    document.querySelectorAll(`[data-page="${k}"]`).forEach(b=>b.classList.toggle('hidden',settings.sections?.[k]===false));
+  }
+  $('editTitle').value=settings.title;$('editSubtitle').value=settings.subtitle;$('editAccent').value=settings.accent;
+  document.querySelectorAll('[data-section]').forEach(x=>{x.checked=settings.sections?.[x.dataset.section]!==false;});
+}
+
+async function refreshSettings(){if(!db){applySettings();return;}const {data,error}=await db.from('site_settings').select('*').eq('id',1).single();if(error){fail(error);return;}settings={...defaults,...data,sections:{...defaults.sections,...data.sections}};applySettings();}
+
+function updateAuthUI(){
+  const logged=Boolean(user);
+  $('authForm').classList.toggle('hidden',logged);
+  $('signedInForm').classList.toggle('hidden',!logged);
+  $('sessionStatus').textContent=logged?`Prihlásený účet: ${user.email}`:'Vytvor si účet alebo sa prihlás.';
+  $('adminMenu').classList.toggle('hidden',!isAdmin);
+  $('logoutMenu').classList.toggle('hidden',!logged);
+  if(!logged){$('accountToggle').textContent='◎';$('profileName').value='';}
+  else if(!$('accountToggle').querySelector('img')) $('accountToggle').textContent=(user.email||'U')[0].toUpperCase();
+}
+async function syncUser(){
+  if(!db)return;
+  const {data:{user:active},error}=await db.auth.getUser();
+  if(error && !/Auth session missing/i.test(error.message)){console.warn(error);}
+  user=active||null;
+  if(user){
+    const [prof,ad]=await Promise.all([
+      db.from('profiles').select('display_name,avatar_path').eq('id',user.id).maybeSingle(),
+      db.from('admins').select('user_id').eq('user_id',user.id).maybeSingle()
+    ]);
+    isAdmin=!!ad.data;
+    $('profileName').value=prof.data?.display_name||'';
+    if(prof.data?.avatar_path){const {data}=await db.storage.from('bagid-avatars').createSignedUrl(prof.data.avatar_path,3600);if(data?.signedUrl){$('accountToggle').replaceChildren();const img=make('img');img.src=data.signedUrl;img.alt='Profilová fotografia';$('accountToggle').append(img);}}
+    await Promise.all([loadTags(),loadSaved('favorites'),loadSaved('visited')]);
+  }else{isAdmin=false;tags=[];saved={favorites:[],visited:[]};}
+  updateAuthUI();renderTags();renderSaved('favorites');renderSaved('visited');
+  if(page==='admin'&&!isAdmin)showPage('profile');
+}
+async function requireDb(){if(!db){toast('Najskôr treba nastaviť Supabase databázu v index.html.');return false;}return true;}
+async function requireUser(){if(!await requireDb())return false;if(!user){toast('Najskôr sa prihlás.');showPage('profile');return false;}return true;}
+async function doSignIn(mode){
+  if(!await requireDb())return;
+  const email=$('authEmail').value.trim(),password=$('authPassword').value;
+  if(!emailValid(email)||password.length<10){toast('Zadaj platný e-mail a heslo s aspoň 10 znakmi.');return;}
+  setBusy('signInBtn',true);setBusy('signUpBtn',true);
+  try{
+    const {data,error}=mode==='up'
+      ?await db.auth.signUp({email,password,options:{emailRedirectTo:baseUrl()}})
+      :await db.auth.signInWithPassword({email,password});
+    if(error)throw error;
+    if(mode==='up'&&!data.session)toast('Účet vytvorený. Skontroluj e-mail a potvrď registráciu.');
+    else{toast('Úspešne prihlásený.');await syncUser();}
+  }catch(e){fail(e);}finally{setBusy('signInBtn',false);setBusy('signUpBtn',false);}
+}
+async function resetPassword(){if(!await requireDb())return;const email=$('authEmail').value.trim();if(!emailValid(email)){toast('Najskôr zadaj svoj e-mail.');return;}const {error}=await db.auth.resetPasswordForEmail(email,{redirectTo:baseUrl()});if(error)fail(error);else toast('Ak existuje účet, pošleme ti e-mail na obnovenie hesla.');}
+async function updatePassword(){const p=$('newPassword').value;if(p.length<10){toast('Heslo musí mať aspoň 10 znakov.');return;}const {error}=await db.auth.updateUser({password:p});if(error)fail(error);else{recoveryMode=false;$('newPasswordForm').classList.add('hidden');$('newPassword').value='';toast('Heslo zmenené.');}}
+async function signOut(){if(!db||!user)return;const {error}=await db.auth.signOut();if(error)fail(error);else{user=null;await syncUser();showPage('profile');toast('Odhlásený.');}}
+async function saveProfile(){if(!await requireUser())return;
+  try{
+    const display_name=$('profileName').value.trim().slice(0,70);
+    const {error}=await db.from('profiles').update({display_name,updated_at:new Date().toISOString()}).eq('id',user.id);
+    if(error)throw error;
+    const photo=$('photoInput').files?.[0];
+    if(photo){
+      if(photo.size>2*1024*1024||!['image/jpeg','image/png','image/webp'].includes(photo.type))throw Error('Fotka musí byť JPG, PNG alebo WebP a mať najviac 2 MB.');
+      const ext={'image/jpeg':'jpg','image/png':'png','image/webp':'webp'}[photo.type];
+      const filename=`${user.id}/avatar.${ext}`;
+      const {error:uploadError}=await db.storage.from('bagid-avatars').upload(filename,photo,{contentType:photo.type,upsert:true});
+      if(uploadError)throw uploadError;
+      const {error:profileError}=await db.from('profiles').update({avatar_path:filename}).eq('id',user.id);
+      if(profileError)throw profileError;
+    }
+    await syncUser();toast('Profil uložený do databázy.');
+  }catch(e){fail(e);}
+}
+
+async function loadTags(){if(!user)return;const {data,error}=await db.from('tags').select('id,code,public_token,label,public_note,contact_email,share_enabled,is_active,owner_id').eq('owner_id',user.id).order('created_at',{ascending:false});if(error)fail(error);else tags=data||[];}
+async function claimTag(){if(!await requireUser())return;const c=normCode($('tagCode').value),s=$('activationKey').value.trim().toLowerCase(),label=$('tagName').value.trim()||'Môj BAG.ID';
+  if(!/^[A-Z2-9]{6}$/.test(c)||!/^[a-f0-9]{32}$/.test(s)){toast('Zadaj 6-miestny kód a 32-znakový aktivačný kľúč.');return;}
+  setBusy('claimBtn',true);try{const {error}=await db.rpc('claim_bag_tag',{p_code:c,p_secret:s,p_label:label});if(error)throw error;$('tagCode').value='';$('activationKey').value='';$('tagName').value='';await loadTags();renderTags();toast('Štítok je teraz priradený k tvojmu účtu.');}catch(e){fail(e);}finally{setBusy('claimBtn',false);}
+}
+async function saveTag(tag,controls){
+  if(!await requireUser())return;
+  const label=controls.label.value.trim().slice(0,70),message=controls.note.value.trim().slice(0,400),contact=controls.contact.value.trim().slice(0,200);
+  if(!label){toast('Zadaj názov predmetu.');return;}
+  if(contact&&!emailValid(contact)){toast('Kontaktný e-mail nemá správny formát.');return;}
+  if(controls.sharing.checked&&contact&&!tag.share_enabled && !confirm('Kontaktný e-mail bude viditeľný každému, kto pozná číslo alebo odkaz štítku. Naozaj ho chceš zverejniť?'))return;
+  try{const {error}=await db.from('tags').update({label,public_note:message,contact_email:contact,share_enabled:controls.sharing.checked,is_active:controls.active.checked,updated_at:new Date().toISOString()}).eq('id',tag.id);if(error)throw error;await loadTags();renderTags();toast('Nastavenie štítku uložené na server.');}catch(e){fail(e);}
+}
+async function copyText(value){try{await navigator.clipboard.writeText(value);toast('Skopírované do schránky.');}catch{window.prompt('Skopíruj tento text:',value);}}
+function renderTags(){const root=$('tagList');root.replaceChildren();if(!user){root.append(make('div','empty','Prihlás sa, aby si videl svoje NFC štítky.'));return;}if(!tags.length){root.append(make('div','empty','Zatiaľ nemáš aktivovaný žiadny BAG.ID štítok.'));return;}
+  for(const tag of tags){
+    const card=make('article','panel tagcard'),head=make('div','taghead');
+    const title=make('div');title.append(make('div','eyebrow','BAG.ID ČÍSLO'),make('div','tagcode',tag.code),make('p','muted',tag.label));
+    const indicator=make('span','pill'+(tag.is_active?' active':''),tag.is_active?'Aktívny':'Vypnutý');head.append(title,indicator);card.append(head);
+    const url=publicUrl(tag.public_token);card.append(make('div','tagurl',url));
+    const row=make('div','buttonrow');const cp=make('button','btn secondary small','Kopírovať NFC link');cp.addEventListener('click',()=>copyText(url));
+    const visit=make('button','btn secondary small','Otvoriť Lost & Found');visit.addEventListener('click',()=>{location.hash='lost/'+tag.public_token;});row.append(cp,visit);card.append(row);
+    const form=make('div','form'),controls={};
+    for(const [field,title,type,value] of [
+      ['label','Názov predmetu','text',tag.label],['note','Správa pre nálezcu','textarea',tag.public_note],['contact','Kontaktný e-mail (voliteľný, verejný pri zdieľaní)','email',tag.contact_email]]){
+      const wrap=make('label','fieldwrap',title),inp=make(type==='textarea'?'textarea':'input','field');if(type!=='textarea')inp.type=type;inp.value=value||'';inp.maxLength=field==='label'?70:field==='note'?400:200;wrap.append(inp);form.append(wrap);controls[field]=inp;
+    }
+    for(const [field,title,checked] of [['sharing','Povoliť Lost & Found zdieľanie',tag.share_enabled],['active','Štítok je aktívny',tag.is_active]]){
+      const wrap=make('label','check'),inp=make('input');inp.type='checkbox';inp.checked=checked;wrap.append(inp,document.createTextNode(' '+title));form.append(wrap);controls[field]=inp;
+    }
+    form.append(make('div','notice','Kontaktný e-mail sa zobrazí len pri zapnutom zdieľaní. Pre súkromie môžeš nechať len správu s miestom odovzdania.'));
+    const saveBtn=make('button','btn','Uložiť nastavenie');saveBtn.addEventListener('click',()=>saveTag(tag,controls));form.append(saveBtn);card.append(form);root.append(card);
+  }
+}
+function showLookup(data,query){const box=$('lookupResult');box.replaceChildren();if(!data?.found){box.append(make('div','notice','Štítok sa nenašiel. Skontroluj kód alebo NFC odkaz.'));document.title='BAG.ID — Lost & Found';return;}
+  document.title=`BAG.ID Číslo ${data.code} — Lost & Found`;
+  $('lookupCode').value=data.code;
+  const card=make('div','panel'),upper=make('div','eyebrow','LOST & FOUND');card.append(upper,make('h2','',`BAG.ID Číslo ${data.code}`));
+  if(data.status==='shared'){
+    card.append(make('p','muted',`Predmet: ${data.label}`));
+    if(data.message)card.append(make('div','notice',data.message));
+    else card.append(make('div','notice','Majiteľ zatiaľ nepridal správu pre nálezcu.'));
+    if(data.contact_email){const a=make('a','btn','Kontaktovať majiteľa e-mailom');a.href=`mailto:${encodeURIComponent(data.contact_email)}?subject=${encodeURIComponent('Nájdený BAG.ID '+data.code)}`;a.style.display='inline-block';a.style.marginTop='14px';card.append(a);}
+  }else{
+    const label=data.status==='inactive'?'Tento štítok je momentálne neaktívny.':data.status==='unclaimed'?'Tento štítok zatiaľ nemá aktivovaného majiteľa.':'Majiteľ zatiaľ nezapol zdieľanie kontaktu.';
+    card.append(make('div','notice',label));
+  }
+  box.append(card);
+}
+async function doLookup({token=null}={}){
+  const c=normCode($('lookupCode').value);if(!token&&!/^[A-Z2-9]{6}$/.test(c)){toast('Zadaj 6-miestny BAG.ID kód.');return;}
+  if(!await requireDb()){showLookup(null);return;}
+  $('lookupResult').replaceChildren(make('div','notice','Hľadám BAG.ID štítok…'));
+  try{const {data,error}=await db.rpc('find_bag_tag',{p_token:token||null,p_code:token?null:c});if(error)throw error;showLookup(data);}
+  catch(e){fail(e);$('lookupResult').replaceChildren(make('div','notice error','Vyhľadávanie je dočasne nedostupné.'));}
+}
+
+async function loadSaved(kind){if(!user)return;const {data,error}=await db.from('saved_places').select('place_id,name,kind,lat,lon').eq('user_id',user.id).eq('list_type',kind).order('created_at',{ascending:false});if(error)fail(error);else saved[kind]=data||[];}
+function renderSaved(kind){const root=$(kind+'List');root.replaceChildren();if(!user){root.append(make('div','empty','Prihlás sa, aby si si mohol ukladať miesta do databázy.'));return;}if(!saved[kind].length){root.append(make('div','empty','Zatiaľ tu nemáš žiadne miesta.'));return;}
+  saved[kind].forEach(p=>{const item=make('div','place'),txt=make('div');txt.append(make('strong','',p.name),make('small','',p.kind||'Miesto'));const b=make('button','btn secondary small','Odstrániť');b.addEventListener('click',()=>toggleSaved(kind,{id:p.place_id,name:p.name,kind:p.kind,lat:p.lat,lon:p.lon}));item.append(txt,b);root.append(item);});
+}
+async function toggleSaved(kind,p){if(!await requireUser())return;const previous=saved[kind].find(x=>x.place_id===p.id);try{
+    const op=previous
+      ?db.from('saved_places').delete().eq('user_id',user.id).eq('list_type',kind).eq('place_id',p.id)
+      :db.from('saved_places').insert({user_id:user.id,list_type:kind,place_id:p.id,name:p.name,kind:p.kind,lat:p.lat,lon:p.lon});
+    const {error}=await op;if(error)throw error;await loadSaved(kind);renderSaved(kind);if(page==='explore')renderResults(results);toast(previous?'Miesto odstránené.':'Miesto uložené do účtu.');
+  }catch(e){fail(e);}
+}
+function distance(lat,lon){const R=6371,toRad=x=>x*Math.PI/180;const dlat=toRad(lat-position.lat),dlon=toRad(lon-position.lon);const a=Math.sin(dlat/2)**2+Math.cos(toRad(position.lat))*Math.cos(toRad(lat))*Math.sin(dlon/2)**2;return (R*2*Math.asin(Math.sqrt(a))).toFixed(1)+' km';}
+function renderResults(items){const root=$('places');root.replaceChildren();$('resultCount').textContent=items.length;if(!items.length){root.append(make('div','empty','Nenašli sa žiadne miesta. Skús väčší okruh.'));return;}
+  for(const p of items){const item=make('div','place'),txt=make('div');txt.append(make('strong','',p.name),make('small','',p.kind+' · '+distance(p.lat,p.lon)));const actions=make('div','place-actions');for(const [kind,label] of [['favorites','♡ Favorites'],['visited','✓ Been']]){const on=saved[kind].some(x=>x.place_id===p.id);const btn=make('button','',on?'✓ '+label:label);btn.addEventListener('click',()=>toggleSaved(kind,p));actions.append(btn);}item.append(txt,actions);root.append(item);}
+}
+function drawPins(items){if(!map||!window.L)return;pins.clearLayers();L.marker([position.lat,position.lon]).bindPopup('Stred vyhľadávania').addTo(pins);items.forEach(p=>L.marker([p.lat,p.lon]).bindPopup(document.createTextNode(p.name)).addTo(pins));map.setView([position.lat,position.lon],12);}
+function initMap(){if(!window.L){$('map').append(make('div','map-fallback','Mapa sa nepodarila načítať.'));return;}try{map=L.map('map',{scrollWheelZoom:false}).setView([position.lat,position.lon],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);pins=L.layerGroup().addTo(map);drawPins([]);}catch(e){console.warn(e);}}
+async function searchPlaces(){setBusy('searchBtn',true);$('places').replaceChildren(make('div','notice','Načítavam OpenStreetMap…'));
+  try{const radius=Number($('radius').value),coords=`(around:${radius},${position.lat},${position.lon})`;
+    const types={cafe:['nwr["amenity"="cafe"]'],restaurant:['nwr["amenity"="restaurant"]'],shop:['nwr["shop"]'],park:['nwr["leisure"="park"]','nwr["tourism"~"attraction|museum|viewpoint"]']};
+    const filters=selectedCat==='all'?Object.values(types).flat():types[selectedCat];
+    const query='[out:json][timeout:20];('+filters.map(s=>s+coords+';').join('')+');out center 75;';
+    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),22000);let response;try{response=await fetch('https://overpass.kumi.systems/api/interpreter',{method:'POST',body:query,signal:controller.signal});}finally{clearTimeout(timer);}
+    if(!response.ok)throw Error('OpenStreetMap momentálne neodpovedá.');const payload=await response.json();
+    results=(payload.elements||[]).filter(p=>p.tags?.name).map(p=>({id:`osm-${p.type}-${p.id}`,name:p.tags.name,kind:p.tags.amenity||p.tags.shop||p.tags.tourism||p.tags.leisure||'Miesto',lat:p.lat??p.center?.lat,lon:p.lon??p.center?.lon})).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).slice(0,35);
+    renderResults(results);drawPins(results);
+  }catch(e){console.warn(e);results=[];renderResults([]);toast('OpenStreetMap je dočasne nedostupná. Skús znova neskôr.');}finally{setBusy('searchBtn',false);}
+}
+function locateUser(){if(!navigator.geolocation){toast('Tvoj prehliadač nepodporuje GPS.');return;}setBusy('locateBtn',true);navigator.geolocation.getCurrentPosition(p=>{position={lat:p.coords.latitude,lon:p.coords.longitude};$('locationInfo').textContent='GPS poloha nastavená';drawPins(results);setBusy('locateBtn',false);toast('Poloha načítaná.');},()=>{setBusy('locateBtn',false);toast('Prístup k polohe sa nepodaril.');},{timeout:12000});}
+
+async function saveSite(changes){if(!isAdmin||!await requireUser())return;try{const {error}=await db.from('site_settings').update({...changes,updated_at:new Date().toISOString()}).eq('id',1);if(error)throw error;await refreshSettings();toast('Nastavenia webu uložené na serveri.');}catch(e){fail(e);}}
+function randomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),n=>chars[n%chars.length]).join('');}
+async function sha256(text){return hex(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text))));}
+async function issueTag(){if(!isAdmin||!await requireUser())return;setBusy('issueTagBtn',true);
+  try{
+    let code,token,activation;
+    for(let i=0;i<6;i++){
+      code=randomCode();token=randomHex(16);activation=randomHex(16);
+      const claim_hash=await sha256(activation);
+      const {error}=await db.from('tags').insert({code,public_token:token,claim_hash});
+      if(!error)break;
+      if(error.code!=='23505'||i===5)throw error;
+    }
+    const box=$('issueResult');box.replaceChildren();const card=make('div','card-mini');card.append(make('div','eyebrow','Nový BAG.ID štítok'),make('h2','',`BAG.ID Číslo ${code}`));
+    card.append(make('div','muted','Verejný NFC link (napíš na čip):'),make('p','copyline',publicUrl(token)));
+    card.append(make('div','muted','Tajný aktivačný kľúč (len na kartičku pre majiteľa):'),make('p','copyline',activation));
+    const btn=make('button','btn secondary small','Kopírovať NFC link');btn.addEventListener('click',()=>copyText(publicUrl(token)));card.append(btn);
+    const warning=make('p','muted','POZOR: aktivačný kľúč sa po obnovení stránky už nezobrazí. Uchovaj ho bezpečne a nikdy ho nezapisuj na NFC čip.');card.append(warning);
+    box.append(card);toast('Nový BAG.ID štítok vytvorený v databáze.');
+  }catch(e){fail(e);}finally{setBusy('issueTagBtn',false);}
+}
+async function addAdmin(){if(!isAdmin||!await requireUser())return;const email=$('adminEmail').value.trim();if(!emailValid(email)){toast('Zadaj platný e-mail.');return;}if(!confirm('Pridáš tomuto účtu právo upravovať BAG.ID a vydávať NFC štítky. Pokračovať?'))return;const {data,error}=await db.rpc('add_bag_admin',{p_email:email});if(error)fail(error);else toast(data?'Administrátor pridaný.':'Účet s overeným e-mailom sa nenašiel.');}
+
+function bindEvents(){
+  document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+  $('brand').addEventListener('click',e=>{e.preventDefault();showPage('explore');});
+  $('accountToggle').addEventListener('click',e=>{e.stopPropagation();$('accountMenu').classList.toggle('hidden');});
+  document.addEventListener('click',e=>{if(!e.target.closest('.account'))headerMenuClose();});
+  $('signInBtn').addEventListener('click',()=>doSignIn('in'));$('signUpBtn').addEventListener('click',()=>doSignIn('up'));$('resetBtn').addEventListener('click',resetPassword);
+  $('updatePasswordBtn').addEventListener('click',updatePassword);
+  $('logoutBtn').addEventListener('click',signOut);$('logoutMenu').addEventListener('click',signOut);
+  $('saveProfileBtn').addEventListener('click',saveProfile);$('claimBtn').addEventListener('click',claimTag);
+  $('lookupBtn').addEventListener('click',()=>doLookup());$('lookupCode').addEventListener('keydown',e=>{if(e.key==='Enter')doLookup();});
+  $('searchBtn').addEventListener('click',searchPlaces);$('locateBtn').addEventListener('click',locateUser);
+  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{selectedCat=b.dataset.cat;document.querySelectorAll('[data-cat]').forEach(n=>n.classList.toggle('active',n===b));}));
+  $('transport').addEventListener('change',()=>toast('Režim dopravy je pripravený pre budúce plánovanie trás.'));
+  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(n=>n.classList.toggle('active',n===b));document.querySelectorAll('.adminpane').forEach(n=>n.classList.toggle('active',n.id==='admin-'+b.dataset.tab));}));
+  $('saveContent').addEventListener('click',()=>saveSite({title:$('editTitle').value.slice(0,150),subtitle:$('editSubtitle').value.slice(0,300)}));
+  $('saveAccent').addEventListener('click',()=>saveSite({accent:$('editAccent').value}));
+  $('saveSections').addEventListener('click',()=>saveSite({sections:Object.fromEntries(Array.from(document.querySelectorAll('[data-section]')).map(n=>[n.dataset.section,n.checked]))}));
+  $('issueTagBtn').addEventListener('click',issueTag);$('addAdminBtn').addEventListener('click',addAdmin);
+  window.addEventListener('hashchange',parseRoute);
+}
+
+async function init(){bindEvents();applySettings();updateAuthUI();initMap();parseRoute();
+  if(!SUPABASE_URL.startsWith('https://')||SUPABASE_PUBLISHABLE_KEY.startsWith('PASTE_')){
+    $('setupNotice').classList.remove('hidden');
+    if(location.hash.startsWith('#lost/'))$('lookupResult').replaceChildren(make('div','notice','Web ešte nemá nakonfigurovanú databázu. NFC vyhľadávanie bude dostupné po nastavení Supabase.'));
+    return;
+  }
+  try{
+    const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    db=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+    db.auth.onAuthStateChange((event)=>{if(event==='PASSWORD_RECOVERY'){recoveryMode=true;$('newPasswordForm').classList.remove('hidden');showPage('profile');}setTimeout(()=>syncUser().catch(fail),0);});
+    await refreshSettings();await syncUser();
+    if(location.hash.startsWith('#lost/'))parseRoute();
+  }catch(e){fail(e);$('setupNotice').textContent='Nepodarilo sa pripojiť k Supabase. Skontroluj SUPABASE_PUBLISHABLE_KEY v index.html, sieť a nastavenie databázy.';$('setupNotice').classList.remove('hidden');}
+}
+init().catch(fail);
+
+</script>
 </body></html>
