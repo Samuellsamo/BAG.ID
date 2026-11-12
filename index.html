@@ -72,6 +72,7 @@ const emailValid = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 let db=null, user=null, isAdmin=false, tags=[], saved={favorites:[],visited:[]};
 let position={lat:48.1486,lon:17.1077}, selectedCat='all', map=null, pins=null, results=[];
 let searchSequence=0, searchAbortController=null, hasSearchedPlaces=false;
+let locationSummary='Ukážka: Bratislava. Pre miesta v okolí použi GPS alebo posuň mapu.';
 let page='explore', recoveryMode=false, lastPublicToken=null;
 const defaults={title:'Explore more.\nLose less.',subtitle:'Objavuj miesta okolo seba a ochráň svoje veci s BAG.ID.',accent:'#151515',sections:{lost:true,tags:true,favorites:true,visited:true}};
 let settings=structuredClone(defaults);
@@ -299,7 +300,6 @@ function initMap(){
       maxZoom:19,attribution:'© OpenStreetMap contributors'
     }).addTo(map);
     pins=L.layerGroup().addTo(map);drawPins([]);
-    map.on('moveend',()=>{if(!hasSearchedPlaces)return;});
   }catch(e){console.warn('BAG.ID mapa',e);}
 }
 const OVERPASS_ENDPOINTS=[
@@ -370,7 +370,7 @@ async function searchPlaces(){
     }
     results=[...unique.values()].sort((a,b)=>a.d-b.d).slice(0,70);
     renderResults(results);drawPins(results);
-    $('locationInfo').textContent+=results.length?' · Nájdených '+results.length+' miest.':' · V zvolenom okruhu sa nič nenašlo.';
+    $('locationInfo').textContent=locationSummary+(results.length?' · Nájdených '+results.length+' miest.':' · V zvolenom okruhu sa nič nenašlo.');
   }catch(e){
     if(sequence!==searchSequence)return;
     console.warn('BAG.ID vyhľadávanie miest',e);
@@ -390,7 +390,8 @@ function locateUser(){
     p=>{
       position={lat:p.coords.latitude,lon:p.coords.longitude};
       results=[];drawPins([]);
-      $('locationInfo').textContent='Východisková poloha: tvoja GPS poloha (presnosť približne '+Math.round(p.coords.accuracy)+' m)';
+      locationSummary='Východisková poloha: tvoja GPS poloha (presnosť približne '+Math.round(p.coords.accuracy)+' m)';
+      $('locationInfo').textContent=locationSummary;
       setBusy('locateBtn',false);searchPlaces();
     },
     err=>{
@@ -405,7 +406,8 @@ function searchAtMapCenter(){
   if(!map){toast('Mapa ešte nie je pripravená.');return;}
   const p=map.getCenter();position={lat:p.lat,lon:p.lng};
   results=[];drawPins([]);
-  $('locationInfo').textContent='Východisková poloha: vybraný stred mapy';
+  locationSummary='Východisková poloha: vybraný stred mapy';
+  $('locationInfo').textContent=locationSummary;
   searchPlaces();
 }
 
