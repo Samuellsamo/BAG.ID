@@ -31,7 +31,7 @@
 <div id="setupNotice" class="notice hidden" style="margin-bottom:22px">Databáza zatiaľ nie je pripojená. Vlož Supabase publishable key do <code>index.html</code> podľa návodu. Explore funguje aj bez prihlásenia.</div>
 <section class="section active" id="explore"><div class="hero"><div><div class="eyebrow">DISCOVER YOUR SURROUNDINGS</div><h1 id="heroTitle">Explore more.<br>Lose less.</h1><p class="lead" id="heroSubtitle">Objavuj miesta vo svojom okolí a maj svoje veci pod kontrolou.</p></div><button class="btn" id="locateBtn">⌖ Použiť moju polohu</button></div>
 <div class="grid" id="categories"><button class="tile active" data-cat="all"><span class="symbol">◈</span><b>All places</b><small>Všetky kategórie</small></button><button class="tile" data-cat="cafe"><span class="symbol">☕</span><b>Cafés</b><small>Kaviarne</small></button><button class="tile" data-cat="restaurant"><span class="symbol">♨</span><b>Restaurants</b><small>Reštaurácie</small></button><button class="tile" data-cat="shop"><span class="symbol">◫</span><b>Shops</b><small>Obchody</small></button><button class="tile" data-cat="park"><span class="symbol">♧</span><b>Parks &amp; sights</b><small>Parky a pamiatky</small></button></div>
-<div class="controls"><label class="fieldwrap">Okruh<select id="radius" class="field"><option value="1000">1 km</option><option value="5000" selected>5 km</option><option value="10000">10 km</option><option value="20000">20 km</option></select></label><label class="fieldwrap">Doprava<select id="transport" class="field"><option value="foot">Pešo</option><option value="bike">Bicyklom</option><option value="car">Autom</option></select></label><button class="btn" id="searchBtn">Vyhľadať miesta</button><span class="muted" id="locationInfo">Východisková poloha: Bratislava (príklad)</span></div>
+<div class="controls"><label class="fieldwrap">Okruh<select id="radius" class="field"><option value="1000">1 km</option><option value="5000" selected>5 km</option><option value="10000">10 km</option><option value="20000">20 km</option></select></label><label class="fieldwrap">Doprava<select id="transport" class="field"><option value="foot">Pešo</option><option value="bike">Bicyklom</option><option value="car">Autom</option></select></label><button class="btn" id="searchBtn">Vyhľadať miesta</button><button class="btn secondary small" id="mapCenterBtn" title="Použiť stred mapy na hľadanie miest">⌖ Hľadať v strede mapy</button><span class="muted" id="locationInfo" role="status">Ukážka: Bratislava. Pre miesta v okolí použi GPS alebo posuň mapu.</span></div>
 <div class="split"><div class="panel"><h2>Mapa okolia</h2><div id="map" class="map"></div></div><div class="panel"><h2>Miesta <span class="pill" id="resultCount">0</span></h2><div class="place-list" id="places"><div class="empty">Vyber kategóriu a klikni na Vyhľadať miesta.</div></div></div></div></section>
 <section class="section" id="lost"><div class="section-top"><div class="eyebrow">LOST &amp; FOUND</div><h1>Nájdi vlastníka.</h1><p class="lead">Naskenuj BAG.ID NFC štítok alebo zadaj jeho 6-miestny kód.</p></div><div class="panel max600"><div class="form"><label class="fieldwrap">Kód štítku<input class="field" id="lookupCode" maxlength="6" autocomplete="off" placeholder="Napr. A2B7C9"></label><button class="btn" id="lookupBtn">Vyhľadať štítok</button></div><div id="lookupResult" class="lookup-result"><div class="notice">Kontaktné údaje sa zobrazia iba vtedy, ak ich majiteľ povolil.</div></div></div></section>
 <section class="section" id="tags"><div class="section-top"><div class="eyebrow">NFC IDENTITY</div><h1>Moje štítky.</h1><p class="lead">Každý BAG.ID štítok má vlastný NFC odkaz a samostatný aktivačný kľúč.</p></div><div class="panel max600"><h2>Aktivovať štítok</h2><p class="muted">Kód a aktivačný kľúč dostaneš k fyzickému štítku. Samotné naskenovanie čipu na prevzatie nestačí.</p><div class="form"><label class="fieldwrap">BAG.ID číslo<input class="field" id="tagCode" maxlength="6" placeholder="A2B7C9" autocomplete="off"></label><label class="fieldwrap">Aktivačný kľúč<input class="field" id="activationKey" maxlength="32" placeholder="32 znakov z kartičky" autocomplete="off"></label><label class="fieldwrap">Názov predmetu<input class="field" id="tagName" maxlength="70" placeholder="Napr. Moja taška"></label><button class="btn" id="claimBtn">Pridať k účtu</button></div></div><div class="section-top" style="margin-top:35px"><h2>Moje aktívne štítky</h2></div><div id="tagList" class="stack"><div class="empty">Po prihlásení sa tu zobrazia tvoje štítky.</div></div></section>
@@ -71,6 +71,7 @@ const baseUrl = () => `${location.origin}${location.pathname}`;
 const emailValid = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 let db=null, user=null, isAdmin=false, tags=[], saved={favorites:[],visited:[]};
 let position={lat:48.1486,lon:17.1077}, selectedCat='all', map=null, pins=null, results=[];
+let searchSequence=0, searchAbortController=null, hasSearchedPlaces=false;
 let page='explore', recoveryMode=false, lastPublicToken=null;
 const defaults={title:'Explore more.\nLose less.',subtitle:'Objavuj miesta okolo seba a ochráň svoje veci s BAG.ID.',accent:'#151515',sections:{lost:true,tags:true,favorites:true,visited:true}};
 let settings=structuredClone(defaults);
@@ -244,24 +245,169 @@ async function toggleSaved(kind,p){if(!await requireUser())return;const previous
     const {error}=await op;if(error)throw error;await loadSaved(kind);renderSaved(kind);if(page==='explore')renderResults(results);toast(previous?'Miesto odstránené.':'Miesto uložené do účtu.');
   }catch(e){fail(e);}
 }
-function distance(lat,lon){const R=6371,toRad=x=>x*Math.PI/180;const dlat=toRad(lat-position.lat),dlon=toRad(lon-position.lon);const a=Math.sin(dlat/2)**2+Math.cos(toRad(position.lat))*Math.cos(toRad(lat))*Math.sin(dlon/2)**2;return (R*2*Math.asin(Math.sqrt(a))).toFixed(1)+' km';}
-function renderResults(items){const root=$('places');root.replaceChildren();$('resultCount').textContent=items.length;if(!items.length){root.append(make('div','empty','Nenašli sa žiadne miesta. Skús väčší okruh.'));return;}
-  for(const p of items){const item=make('div','place'),txt=make('div');txt.append(make('strong','',p.name),make('small','',p.kind+' · '+distance(p.lat,p.lon)));const actions=make('div','place-actions');for(const [kind,label] of [['favorites','♡ Favorites'],['visited','✓ Been']]){const on=saved[kind].some(x=>x.place_id===p.id);const btn=make('button','',on?'✓ '+label:label);btn.addEventListener('click',()=>toggleSaved(kind,p));actions.append(btn);}item.append(txt,actions);root.append(item);}
+
+function distanceKm(lat,lon){
+  const R=6371,toRad=x=>x*Math.PI/180,dlat=toRad(lat-position.lat),dlon=toRad(lon-position.lon);
+  const a=Math.sin(dlat/2)**2+Math.cos(toRad(position.lat))*Math.cos(toRad(lat))*Math.sin(dlon/2)**2;
+  return R*2*Math.asin(Math.min(1,Math.sqrt(a)));
 }
-function drawPins(items){if(!map||!window.L)return;pins.clearLayers();L.marker([position.lat,position.lon]).bindPopup('Stred vyhľadávania').addTo(pins);items.forEach(p=>L.marker([p.lat,p.lon]).bindPopup(document.createTextNode(p.name)).addTo(pins));map.setView([position.lat,position.lon],12);}
-function initMap(){if(!window.L){$('map').append(make('div','map-fallback','Mapa sa nepodarila načítať.'));return;}try{map=L.map('map',{scrollWheelZoom:false}).setView([position.lat,position.lon],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);pins=L.layerGroup().addTo(map);drawPins([]);}catch(e){console.warn(e);}}
-async function searchPlaces(){setBusy('searchBtn',true);$('places').replaceChildren(make('div','notice','Načítavam OpenStreetMap…'));
-  try{const radius=Number($('radius').value),coords=`(around:${radius},${position.lat},${position.lon})`;
-    const types={cafe:['nwr["amenity"="cafe"]'],restaurant:['nwr["amenity"="restaurant"]'],shop:['nwr["shop"]'],park:['nwr["leisure"="park"]','nwr["tourism"~"attraction|museum|viewpoint"]']};
-    const filters=selectedCat==='all'?Object.values(types).flat():types[selectedCat];
-    const query='[out:json][timeout:20];('+filters.map(s=>s+coords+';').join('')+');out center 75;';
-    const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),22000);let response;try{response=await fetch('https://overpass.kumi.systems/api/interpreter',{method:'POST',body:query,signal:controller.signal});}finally{clearTimeout(timer);}
-    if(!response.ok)throw Error('OpenStreetMap momentálne neodpovedá.');const payload=await response.json();
-    results=(payload.elements||[]).filter(p=>p.tags?.name).map(p=>({id:`osm-${p.type}-${p.id}`,name:p.tags.name,kind:p.tags.amenity||p.tags.shop||p.tags.tourism||p.tags.leisure||'Miesto',lat:p.lat??p.center?.lat,lon:p.lon??p.center?.lon})).filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon)).slice(0,35);
+function distance(lat,lon){return distanceKm(lat,lon).toFixed(1)+' km';}
+function renderResults(items){
+  const root=$('places');root.replaceChildren();$('resultCount').textContent=items.length;
+  if(!items.length){root.append(make('div','empty','Nenašli sa pomenované miesta v zadanom okruhu. Skús inú kategóriu alebo väčší okruh.'));return;}
+  for(const p of items){
+    const item=make('div','place'),txt=make('div');
+    txt.append(make('strong','',p.name),make('small','',p.kind+' · '+distance(p.lat,p.lon)));
+    const actions=make('div','place-actions');
+    const focus=make('button','','⌖ Mapa');
+    focus.addEventListener('click',()=>{
+      if(!map)return;
+      showPage('explore');
+      map.invalidateSize();
+      map.setView([p.lat,p.lon],16);
+      L.popup().setLatLng([p.lat,p.lon]).setContent(make('span','',p.name)).openOn(map);
+      $('map').scrollIntoView({behavior:'smooth',block:'center'});
+    });
+    actions.append(focus);
+    for(const [kind,label] of [['favorites','♡ Favorites'],['visited','✓ Been']]){
+      const on=saved[kind].some(x=>x.place_id===p.id);
+      const btn=make('button','',on?'✓ '+label:label);
+      btn.addEventListener('click',()=>toggleSaved(kind,p));actions.append(btn);
+    }
+    item.append(txt,actions);root.append(item);
+  }
+}
+function drawPins(items){
+  if(!map||!window.L||!pins)return;
+  pins.clearLayers();
+  L.circleMarker([position.lat,position.lon],{radius:8,weight:2,color:'#111',fillColor:'#fff',fillOpacity:1})
+    .bindPopup('Stred vyhľadávania').addTo(pins);
+  items.forEach(p=>L.marker([p.lat,p.lon]).bindPopup(make('span','',p.name)).addTo(pins));
+  const radius=Number($('radius').value)||5000;
+  if(items.length){
+    const coordinates=[[position.lat,position.lon],...items.map(p=>[p.lat,p.lon])];
+    map.fitBounds(L.latLngBounds(coordinates),{padding:[25,25],maxZoom:15});
+  }else{
+    map.setView([position.lat,position.lon],radius<=1000?14:radius<=5000?12:radius<=10000?11:10);
+  }
+}
+function initMap(){
+  if(!window.L){$('map').append(make('div','map-fallback','Mapa sa nepodarila načítať.'));return;}
+  try{
+    map=L.map('map',{scrollWheelZoom:false}).setView([position.lat,position.lon],12);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      maxZoom:19,attribution:'© OpenStreetMap contributors'
+    }).addTo(map);
+    pins=L.layerGroup().addTo(map);drawPins([]);
+    map.on('moveend',()=>{if(!hasSearchedPlaces)return;});
+  }catch(e){console.warn('BAG.ID mapa',e);}
+}
+const OVERPASS_ENDPOINTS=[
+  'https://overpass.private.coffee/api/interpreter',
+  'https://overpass-api.de/api/interpreter'
+];
+async function fetchPlacesFromOverpass(query,sequence){
+  let lastError=null;
+  for(let i=0;i<OVERPASS_ENDPOINTS.length;i++){
+    if(sequence!==searchSequence)return null;
+    const controller=new AbortController();
+    searchAbortController=controller;
+    let timedOut=false;
+    const timeout=setTimeout(()=>{timedOut=true;controller.abort();},24000);
+    try{
+      const response=await fetch(OVERPASS_ENDPOINTS[i],{
+        method:'POST',
+        headers:{'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},
+        body:new URLSearchParams({data:query}).toString(),
+        signal:controller.signal
+      });
+      if(response.status===429)throw Object.assign(new Error('Mapový server je vyťažený. Počkaj chvíľu a skús to znova.'),{stop:true});
+      if([400,403,406].includes(response.status))throw Object.assign(new Error('Mapový server odmietol požiadavku (HTTP '+response.status+').'),{stop:true});
+      if(!response.ok)throw Error('Mapový server odpovedal HTTP '+response.status);
+      const payload=await response.json();
+      if(!Array.isArray(payload.elements))throw Error('Mapová služba nevrátila platný zoznam miest.');
+      if(payload.remark && payload.elements.length===0)throw Error('Mapová služba nestihla spracovať vyhľadávanie.');
+      return payload.elements;
+    }catch(e){
+      if(sequence!==searchSequence)return null;
+      if(e.name==='AbortError'&&!timedOut)return null;
+      lastError=e;
+      if(e.stop)break;
+      if(i+1<OVERPASS_ENDPOINTS.length){
+        $('places').replaceChildren(make('div','notice','Prvý mapový server neodpovedá. Skúšam záložný…'));
+      }
+    }finally{clearTimeout(timeout);}
+  }
+  throw lastError||Error('Mapová služba nie je dostupná.');
+}
+async function searchPlaces(){
+  if(searchAbortController)searchAbortController.abort();
+  const sequence=++searchSequence;
+  hasSearchedPlaces=true;
+  const center={...position},radius=Number($('radius').value)||5000;
+  const types={
+    cafe:['nwr["amenity"="cafe"]["name"]'],
+    restaurant:['nwr["amenity"~"^(restaurant|fast_food)$"]["name"]'],
+    shop:['nwr["shop"]["name"]'],
+    park:['nwr["leisure"~"^(park|garden)$"]["name"]','nwr["tourism"~"^(attraction|museum|viewpoint)$"]["name"]']
+  };
+  const filters=selectedCat==='all'?Object.values(types).flat():types[selectedCat]||[];
+  const coords='(around:'+radius+','+center.lat.toFixed(6)+','+center.lon.toFixed(6)+')';
+  const query='[out:json][timeout:25];('+filters.map(f=>f+coords+';').join('')+');out center 1600;';
+  setBusy('searchBtn',true);setBusy('mapCenterBtn',true);
+  $('places').replaceChildren(make('div','notice','Hľadám miesta okolo zvoleného bodu…'));
+  try{
+    const elements=await fetchPlacesFromOverpass(query,sequence);
+    if(!elements||sequence!==searchSequence)return;
+    const unique=new Map();
+    for(const p of elements){
+      const lat=p.lat??p.center?.lat,lon=p.lon??p.center?.lon;
+      if(!p.tags?.name||!Number.isFinite(lat)||!Number.isFinite(lon))continue;
+      const d=distanceKm(lat,lon);
+      if(d>radius/1000+0.03)continue;
+      const id='osm-'+p.type+'-'+p.id;
+      unique.set(id,{id,name:p.tags.name,kind:p.tags.amenity||p.tags.shop||p.tags.tourism||p.tags.leisure||'Miesto',lat,lon,d});
+    }
+    results=[...unique.values()].sort((a,b)=>a.d-b.d).slice(0,70);
     renderResults(results);drawPins(results);
-  }catch(e){console.warn(e);results=[];renderResults([]);toast('OpenStreetMap je dočasne nedostupná. Skús znova neskôr.');}finally{setBusy('searchBtn',false);}
+    $('locationInfo').textContent+=results.length?' · Nájdených '+results.length+' miest.':' · V zvolenom okruhu sa nič nenašlo.';
+  }catch(e){
+    if(sequence!==searchSequence)return;
+    console.warn('BAG.ID vyhľadávanie miest',e);
+    results=[];$('resultCount').textContent='0';drawPins([]);
+    $('places').replaceChildren(make('div','notice',e.message+' Môžeš to skúsiť o chvíľu alebo vybrať menší okruh.'));
+    toast('Vyhľadávanie miest momentálne nefunguje. Skús znova neskôr.');
+  }finally{
+    if(sequence===searchSequence){
+      searchAbortController=null;setBusy('searchBtn',false);setBusy('mapCenterBtn',false);
+    }
+  }
 }
-function locateUser(){if(!navigator.geolocation){toast('Tvoj prehliadač nepodporuje GPS.');return;}setBusy('locateBtn',true);navigator.geolocation.getCurrentPosition(p=>{position={lat:p.coords.latitude,lon:p.coords.longitude};$('locationInfo').textContent='GPS poloha nastavená';drawPins(results);setBusy('locateBtn',false);toast('Poloha načítaná.');},()=>{setBusy('locateBtn',false);toast('Prístup k polohe sa nepodaril.');},{timeout:12000});}
+function locateUser(){
+  if(!navigator.geolocation){toast('Prehliadač nepodporuje GPS. Posuň mapu a klikni Hľadať v strede mapy.');return;}
+  setBusy('locateBtn',true);
+  navigator.geolocation.getCurrentPosition(
+    p=>{
+      position={lat:p.coords.latitude,lon:p.coords.longitude};
+      results=[];drawPins([]);
+      $('locationInfo').textContent='Východisková poloha: tvoja GPS poloha (presnosť približne '+Math.round(p.coords.accuracy)+' m)';
+      setBusy('locateBtn',false);searchPlaces();
+    },
+    err=>{
+      setBusy('locateBtn',false);
+      const msg=err.code===1?'Prístup k polohe je zakázaný. Povoľ polohu v prehliadači alebo použi stred mapy.':
+        err.code===2?'GPS polohu sa nepodarilo zistiť. Skús vybrať miesto na mape.':'Zisťovanie polohy trvalo príliš dlho. Skús znovu.';
+      toast(msg);
+    },{enableHighAccuracy:true,timeout:15000,maximumAge:300000}
+  );
+}
+function searchAtMapCenter(){
+  if(!map){toast('Mapa ešte nie je pripravená.');return;}
+  const p=map.getCenter();position={lat:p.lat,lon:p.lng};
+  results=[];drawPins([]);
+  $('locationInfo').textContent='Východisková poloha: vybraný stred mapy';
+  searchPlaces();
+}
 
 async function saveSite(changes){if(!isAdmin||!await requireUser())return;try{const {error}=await db.from('site_settings').update({...changes,updated_at:new Date().toISOString()}).eq('id',1);if(error)throw error;await refreshSettings();toast('Nastavenia webu uložené na serveri.');}catch(e){fail(e);}}
 function randomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from(crypto.getRandomValues(new Uint8Array(6)),n=>chars[n%chars.length]).join('');}
@@ -296,8 +442,8 @@ function bindEvents(){
   $('logoutBtn').addEventListener('click',signOut);$('logoutMenu').addEventListener('click',signOut);
   $('saveProfileBtn').addEventListener('click',saveProfile);$('claimBtn').addEventListener('click',claimTag);
   $('lookupBtn').addEventListener('click',()=>doLookup());$('lookupCode').addEventListener('keydown',e=>{if(e.key==='Enter')doLookup();});
-  $('searchBtn').addEventListener('click',searchPlaces);$('locateBtn').addEventListener('click',locateUser);
-  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{selectedCat=b.dataset.cat;document.querySelectorAll('[data-cat]').forEach(n=>n.classList.toggle('active',n===b));}));
+  $('searchBtn').addEventListener('click',searchPlaces);$('locateBtn').addEventListener('click',locateUser);$('mapCenterBtn').addEventListener('click',searchAtMapCenter);
+  document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{selectedCat=b.dataset.cat;document.querySelectorAll('[data-cat]').forEach(n=>n.classList.toggle('active',n===b));if(hasSearchedPlaces)searchPlaces();}));
   $('transport').addEventListener('change',()=>toast('Režim dopravy je pripravený pre budúce plánovanie trás.'));
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(n=>n.classList.toggle('active',n===b));document.querySelectorAll('.adminpane').forEach(n=>n.classList.toggle('active',n.id==='admin-'+b.dataset.tab));}));
   $('saveContent').addEventListener('click',()=>saveSite({title:$('editTitle').value.slice(0,150),subtitle:$('editSubtitle').value.slice(0,300)}));
