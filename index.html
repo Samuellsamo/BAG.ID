@@ -21,6 +21,11 @@
 
 .lookup-result{margin-top:18px}.lookup-result>.panel{margin-top:12px}.tagcard{padding:20px}.tagcard .taghead{display:flex;justify-content:space-between;align-items:start;gap:14px}.tagcard .form{margin-top:15px}.tagcode{font-size:22px;letter-spacing:2px;font-weight:850}.tagurl{overflow-wrap:anywhere;font-size:12px;color:#666}.card-top{display:flex;justify-content:space-between;gap:12px}.buttonrow .btn{white-space:normal}.notice.error{border-color:#d9b2b2;background:#fff5f5;color:#a00}.notice.success{border-color:#afcdb2;background:#f5fff6}.qrpanel{margin-top:18px}.account-menu{z-index:1010}.admin-tabs button{cursor:pointer}h1{white-space:pre-line}.card-mini{background:#fafafa;border:1px solid #ddd;padding:16px;border-radius:12px;overflow-wrap:anywhere}small{line-height:1.5}.fieldwrap textarea{resize:vertical}input[type=checkbox]{accent-color:#111;cursor:pointer}.section.disabled{display:none}.statusline{color:#555;font-size:12px}.pill.active{background:#e4f2e7;color:#205b2e}footer{margin-top:40px}.copyline{font-family:ui-monospace,monospace;letter-spacing:.3px;overflow-wrap:anywhere}
 
+
+.tag-remove-area{margin-top:17px;padding-top:15px;border-top:1px solid var(--line)}
+.tag-remove-area .share-hint{margin:0 0 10px;color:var(--muted);font-size:12px;line-height:1.5}
+.remove-tag-btn{border-color:#dfbebe!important;color:#a12d2d!important;background:white!important}
+.remove-tag-btn:hover{background:#fff4f4!important}
 </style>
 </head>
 <body>
@@ -191,6 +196,25 @@ async function saveTag(tag,controls){
   if(controls.sharing.checked&&contact&&!tag.share_enabled && !confirm('Kontaktný e-mail bude viditeľný každému, kto pozná číslo alebo odkaz štítku. Naozaj ho chceš zverejniť?'))return;
   try{const {error}=await db.from('tags').update({label,public_note:message,contact_email:contact,share_enabled:controls.sharing.checked,is_active:controls.active.checked,updated_at:new Date().toISOString()}).eq('id',tag.id);if(error)throw error;await loadTags();renderTags();toast('Nastavenie štítku uložené na server.');}catch(e){fail(e);}
 }
+async function removeTagFromAccount(tag,button){
+  if(!await requireUser())return;
+  const warning='Odstrániť BAG.ID číslo '+tag.code+' z tvojho účtu?\n\n'+
+    'Štítok sa deaktivuje a Lost & Found prestane zobrazovať kontakt aj správu. NFC odkaz zostane zachovaný.\n\n'+
+    'Na opätovné pridanie potrebuješ pôvodný aktivačný kľúč. Ak ho nemáš, štítok radšej neodstraňuj.';
+  if(!confirm(warning))return;
+  button.disabled=true;
+  try{
+    const {data,error}=await db.rpc('release_bag_tag',{p_tag_id:tag.id});
+    if(error)throw error;
+    if(data!==true)throw new Error('Štítok sa nepodarilo odstrániť. Skontroluj, či patrí tvojmu účtu.');
+    await loadTags();renderTags();
+    toast('BAG.ID číslo '+tag.code+' bolo odstránené z tvojho účtu.');
+  }catch(e){
+    fail(e);
+    button.disabled=false;
+  }
+}
+
 async function copyText(value){try{await navigator.clipboard.writeText(value);toast('Skopírované do schránky.');}catch{window.prompt('Skopíruj tento text:',value);}}
 function renderTags(){const root=$('tagList');root.replaceChildren();if(!user){root.append(make('div','empty','Prihlás sa, aby si videl svoje NFC štítky.'));return;}if(!tags.length){root.append(make('div','empty','Zatiaľ nemáš aktivovaný žiadny BAG.ID štítok.'));return;}
   for(const tag of tags){
@@ -209,7 +233,13 @@ function renderTags(){const root=$('tagList');root.replaceChildren();if(!user){r
       const wrap=make('label','check'),inp=make('input');inp.type='checkbox';inp.checked=checked;wrap.append(inp,document.createTextNode(' '+title));form.append(wrap);controls[field]=inp;
     }
     form.append(make('div','notice','Kontaktný e-mail sa zobrazí len pri zapnutom zdieľaní. Pre súkromie môžeš nechať len správu s miestom odovzdania.'));
-    const saveBtn=make('button','btn','Uložiť nastavenie');saveBtn.addEventListener('click',()=>saveTag(tag,controls));form.append(saveBtn);card.append(form);root.append(card);
+    const saveBtn=make('button','btn','Uložiť nastavenie');saveBtn.addEventListener('click',()=>saveTag(tag,controls));form.append(saveBtn);
+    const removal=make('div','tag-remove-area');
+    const hint=make('p','share-hint','Odstránením z účtu sa štítok deaktivuje. Na opätovné priradenie budeš potrebovať pôvodný aktivačný kľúč.');
+    const removeBtn=make('button','btn secondary small remove-tag-btn','Odstrániť štítok z My Tags');
+    removeBtn.addEventListener('click',()=>removeTagFromAccount(tag,removeBtn));
+    removal.append(hint,removeBtn);
+    form.append(removal);card.append(form);root.append(card);
   }
 }
 function showLookup(data,query){const box=$('lookupResult');box.replaceChildren();if(!data?.found){box.append(make('div','notice','Štítok sa nenašiel. Skontroluj kód alebo NFC odkaz.'));document.title='BAG.ID — Lost & Found';return;}
